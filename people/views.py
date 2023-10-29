@@ -1,21 +1,45 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound, Http404
+from django.shortcuts import render, redirect
+
 from .models import *
 
-
-menu = ["About", "Create a profile", "Feedback", "Log on"]
+menu = [{'title': "About", 'url_name': 'about'},
+        {'title': "New post", 'url_name': 'add_page'},
+        {'title': "Contacts", 'url_name': 'contact'},
+        {'title': "Login", 'url_name': 'login'}
+]
 
 
 def index(request):
     posts = People.objects.all()
-    return render(request, 'people/index.html', {"posts": posts,
-                                                 "menu": menu, "title": "Main page"})
+    context = {
+        'posts': posts,
+        'menu': menu,
+        'title': 'Main page'
+    }
+
+    return render(request, 'people/index.html', context=context)
 
 
 def about(request):
-    return render(request, 'people/about.html', {"menu": menu, "title": "About"})
+    return render(request, 'people/about.html', {'menu': menu, 'title': 'About'})
 
 
-def categories(request, cat_id):
-    return HttpResponse(f"<h1>Categories</h1><p>{cat_id}</p>")
+def addpage(request):
+    return HttpResponse("New post")
 
+
+def contact(request):
+    return HttpResponse("Contacts")
+
+
+def login(request):
+    return HttpResponse("Login")
+
+
+def pageNotFound(request, exception):
+    return HttpResponseNotFound('<h1>Page not found</h1>')
+
+
+def show_post(request, post_id):
+    return HttpResponse(f" ID = {post_id}")
